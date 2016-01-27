@@ -1,9 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OneCog.Core.Tests
 {
@@ -13,23 +9,23 @@ namespace OneCog.Core.Tests
         [Test]
         public void ReturnASuccessfulResultWhenBuiltFromValue()
         {
-            IFallible<int> actual = Fallible.FromValue<int>(314);
+            IFallible<int> actual = Fallible.FromValue(314);
 
             Assert.That(actual.IsValue, Is.True);
             Assert.That(actual.IsError, Is.False);
         }
 
         [Test]
-        public void ReturnHoldValueAWhenBuiltFromValue()
+        public void HoldTheCorrectValueAWhenBuiltFromValue()
         {
-            IFallible<int> actual = Fallible.FromValue<int>(314);
+            IFallible<int> actual = Fallible.FromValue(314);
 
             Assert.That(actual.Value, Is.EqualTo(314));
             Assert.That(actual.Error, Is.Null);
         }
 
         [Test]
-        public void ReturnAErrorResultWhenBuiltFromError()
+        public void ReturnAnErrorResultWhenBuiltFromError()
         {
             IFallible<int> actual = Fallible.FromError<int>(new ArgumentException());
 
@@ -38,7 +34,7 @@ namespace OneCog.Core.Tests
         }
 
         [Test]
-        public void ReturnHoldErrorAWhenBuiltFromError()
+        public void HoldAnErrorAWhenBuiltFromError()
         {
             IFallible<int> actual = Fallible.FromError<int>(new ArgumentException());
 
