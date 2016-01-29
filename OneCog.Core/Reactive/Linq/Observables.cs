@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace OneCog.Core.Reactive.Linq
 {
-    public static class ObservableExtentions
+    public static class Observables
     {
         /// <summary>
         /// Emits values when the value of the predicate is false
@@ -32,7 +32,7 @@ namespace OneCog.Core.Reactive.Linq
         public static IObservable<T> ThrowWhen<T>(this IObservable<T> source, Func<T,bool> predicate, Func<T,Exception> projection)
         {
             return Observable.Create<T>(
-                observer =>
+                (IObserver<T> observer) =>
                 {
                     Action<T> handler = 
                         value =>
@@ -49,6 +49,32 @@ namespace OneCog.Core.Reactive.Linq
 
                     return source.Subscribe(handler, observer.OnError, observer.OnCompleted);
                 }
+            );
+        }
+
+        public static IObservable<TSource> UsingRefCounted<TSource, TResource>(RefCounted<TResource> resource, Func<TResource, IObservable<TSource>> observableFactory)
+        {
+            return Observable.Create<TSource>(
+                observer =>
+                {
+                    resource.AddReference();
+
+                    IObservable<TSource> observable = observableFactory(resource.Instance);
+
+                    return new CompositeDisposable(
+                        observable.Subscribe(observer),
+                        Disposable.Create(resource.DropReference)
+                    );
+                }
+            );
+        }
+
+        public static IObservable<TSource> UsingRefCounted<TSource, TResource>(Func<TResource> resourceFactory, Func<TResource, IObservable<TSource>> observableFactory) where TResource : IDisposable
+        {
+            RefCounted<TResource> refCounted = new RefCounted<TResource>(resourceFactory, resource => resource.Dispose());
+
+            return Observable.Create<TSource>(
+                observer => UsingRefCounted(refCounted, observableFactory).Subscribe(observer)
             );
         }
     }

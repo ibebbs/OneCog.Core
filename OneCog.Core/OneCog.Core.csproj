@@ -37,7 +37,8 @@
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Fallible.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reactive\Linq\ObservableExtentions.cs" />
+    <Compile Include="Reactive\Linq\Observables.cs" />
+    <Compile Include="RefCounted.cs" />
     <Compile Include="Text\MultiRegexBuilder.cs" />
     <Compile Include="Text\RegexExtensions.cs" />
   </ItemGroup>
